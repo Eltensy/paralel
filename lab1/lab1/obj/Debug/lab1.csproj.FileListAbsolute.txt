@@ -1,0 +1,10 @@
+C:\Users\Anton\Desktop\para\lab1\lab1\bin\Debug\lab1.exe.config
+C:\Users\Anton\Desktop\para\lab1\lab1\bin\Debug\lab1.exe
+C:\Users\Anton\Desktop\para\lab1\lab1\bin\Debug\lab1.pdb
+C:\Users\Anton\Desktop\para\lab1\lab1\bin\Debug\MathNet.Numerics.dll
+C:\Users\Anton\Desktop\para\lab1\lab1\bin\Debug\MathNet.Numerics.xml
+C:\Users\Anton\Desktop\para\lab1\lab1\obj\Debug\lab1.csproj.AssemblyReference.cache
+C:\Users\Anton\Desktop\para\lab1\lab1\obj\Debug\lab1.csproj.CoreCompileInputs.cache
+C:\Users\Anton\Desktop\para\lab1\lab1\obj\Debug\lab1.csproj.CopyComplete
+C:\Users\Anton\Desktop\para\lab1\lab1\obj\Debug\lab1.exe
+C:\Users\Anton\Desktop\para\lab1\lab1\obj\Debug\lab1.pdb
