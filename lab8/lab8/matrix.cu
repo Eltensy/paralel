@@ -34,7 +34,7 @@ int main() {
     cudaSetDevice(0);
     for(int n = 32; n<=16384; n = n*2)
     {
-                
+
                 std::cout << "n: " << n << std::endl;
 
                 int m = n;
@@ -65,9 +65,6 @@ int main() {
                 std::cout << "CUDA algo run time: " << 1000.0 * (cudaEnd - cudaStart) / CLOCKS_PER_SEC << " ms" << std::endl;
 
                 cudaMemcpy(resultCUDA, d_result, n * n * sizeof(int), cudaMemcpyDeviceToHost);
-
-                //double speedup = (sequentialEnd - sequentialStart) / (cudaEnd - cudaStart);
-                //std::cout << "Speedup: " << speedup << std::endl;
 
                 delete[] A;
                 delete[] B;

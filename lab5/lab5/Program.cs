@@ -10,41 +10,41 @@ class Program
 {
     public static void Main()
     {
-        var n = 1000;
-        int k = 8;
+        for (int k = 8; k >= 2; k = k - 2)
+        {
+            for (int n = 32; n <= 1024; n = n * 2)
+            {
 
-        int[,] random_graph = new int[n, n];
+                int[,] random_graph = new int[n, n];
 
-        var floyd = new Floyd();
-        var random_V = new List<V>();
+                var floyd = new Floyd();
+                var random_V = new List<V>();
 
-        var random = new Random();
-        floyd.Threads(k);
+                var random = new Random();
+                floyd.Threads(k);
 
-        floyd.RandomV(n, random, random_V);
+                floyd.RandomV(n, random, random_V);
 
-        Stopwatch seqtime = new Stopwatch();
 
-        seqtime.Start();
-        floyd.InitGraph(random_graph, n, random_V);
-        floyd.FloydAlgorithm(random_graph, n);
-        seqtime.Stop();
+                Stopwatch seqtime = new Stopwatch();
+                seqtime.Start();
+                floyd.InitGraph(random_graph, n, random_V);
+                floyd.FloydAlgorithm(random_graph, n);
+                seqtime.Stop();
 
-        Console.WriteLine($"floyd seq run time: {seqtime.ElapsedMilliseconds} ms");
+                Stopwatch paraltime = new Stopwatch();
+                paraltime.Start();
+                floyd.InitGraph(random_graph, n, random_V);
+                floyd.FloydAlgorithm_Parallel(random_graph, n);
+                paraltime.Stop();
 
-        Stopwatch paraltime = new Stopwatch();
+                double speedup = (double)seqtime.ElapsedMilliseconds / paraltime.ElapsedMilliseconds;
+                double efficiency = (speedup / k)*100;
+                Console.WriteLine($"k: {k} || n: {n} || seq time: {seqtime.ElapsedMilliseconds} ms || paral time: {paraltime.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}%");
 
-        paraltime.Start();
-        floyd.InitGraph(random_graph, n, random_V);
-        floyd.FloydAlgorithm_Parallel(random_graph, n);
-        paraltime.Stop();
-
-        Console.WriteLine($"floyd paral run time with {k} threads: {paraltime.ElapsedMilliseconds} ms");
-
-        double acceleration = floyd.Acceleration(seqtime, paraltime);
-        Console.WriteLine($"speedup: {acceleration.ToString("f2")}");
-        double floyd_efficiency = floyd.Efficiency(acceleration, k);
-        Console.WriteLine($"efficiency: {floyd_efficiency.ToString("f2")}%");
+            }
+            Console.WriteLine('\t');
+        }
         Console.ReadLine();
     }
 }
@@ -166,18 +166,5 @@ class Floyd
             var v = new V(a0, an, value);
             random_V.Add(v);
         }
-    }
-    public double Acceleration(Stopwatch stopwatch1, Stopwatch stopwatch2)
-    {
-        double time1 = (double)stopwatch1.ElapsedMilliseconds;
-        double time2 = (double)stopwatch2.ElapsedMilliseconds;
-        double boost = time1 / time2;
-        return boost;
-    }
-
-    public double Efficiency(double acceleration, int threads)
-    {
-        double efficiency = acceleration / threads * 100;
-        return efficiency;
     }
 }

@@ -7,33 +7,36 @@ class Program
 {
     static void Main(string[] args)
     {
-        var startVertex = 2;
-        var k = 8;
-        var n = 10000;
+        for (int k = 8; k >= 2; k = k - 2)
+        {
+            for (int n = 128; n <= 8192; n = n * 2)
+            {
+                var startVertex = 2;
 
-        var dijkstra = new DijkstraAlgorithm();
-        dijkstra.Threads(k);
-        int[,] graph = dijkstra.RandomGraph(n);
+                var dijkstra = new DijkstraAlgorithm();
+                dijkstra.Threads(k);
+                int[,] graph = dijkstra.RandomGraph(n);
 
 
-        Stopwatch seqtime = new Stopwatch();
-        seqtime.Start();
-        dijkstra.Dijkstra(graph, startVertex);
-        seqtime.Stop();
+                Stopwatch seqtime = new Stopwatch();
+                seqtime.Start();
+                dijkstra.Dijkstra(graph, startVertex);
+                seqtime.Stop();
 
-        Console.WriteLine($"dijkstra seq run time: {seqtime.ElapsedMilliseconds} ms");
+               
+                Stopwatch paraltime = new Stopwatch();
+                paraltime.Start();
+                dijkstra.DijkstraParallel(graph, startVertex);
+                paraltime.Stop();
 
-        Stopwatch paraltime = new Stopwatch();
-        paraltime.Start();
-        dijkstra.DijkstraParallel(graph, startVertex);
-        paraltime.Stop();
+              
+                double speedup = (double)seqtime.ElapsedMilliseconds / paraltime.ElapsedMilliseconds;
+                double efficiency = (speedup / k) * 100;
 
-        Console.WriteLine($"dijkstra paral run time with {k} threads: {paraltime.ElapsedMilliseconds} ms");
+                Console.WriteLine($"k: {k} || n: {n} || seq time: {seqtime.ElapsedMilliseconds} ms || paral time: {paraltime.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}%");
 
-        double acceleration = dijkstra.Acceleration(seqtime, paraltime);
-        Console.WriteLine($"speedup: {acceleration.ToString("f2")}");
-        double dijkstra_efficiency = dijkstra.Efficiency(acceleration, k);
-        Console.WriteLine($"efficiency: {dijkstra_efficiency.ToString("f2")}%");
+            }
+        }
         Console.ReadLine();
     }
 
@@ -157,17 +160,4 @@ class DijkstraAlgorithm
         return graph;
     }
 
-    public double Acceleration(Stopwatch stopwatch1, Stopwatch stopwatch2)
-    {
-        double time1 = (double)stopwatch1.ElapsedMilliseconds;
-        double time2 = (double)stopwatch2.ElapsedMilliseconds;
-        double boost = time1 / time2;
-        return boost;
-    }
-
-    public double Efficiency(double acceleration, int threads)
-    {
-        double efficiency = acceleration / threads * 100;
-        return efficiency;
-    }
 }

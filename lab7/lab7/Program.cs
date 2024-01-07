@@ -8,33 +8,36 @@ class Program
 {
     static void Main(string[] args)
     {
-        int startVertex = 0;
-        var k = 6;
-        var n = 10000;
+        for (int k = 8; k >= 2; k = k - 2)
+        {
+            for (int n = 128; n <= 8192; n = n * 2)
+            {
+                int startVertex = 0;
 
-        var prim = new PrimAlgorithm();
-        prim.Threads(k);
-        int[,] graph;
-        graph = prim.RandomGraph(n);
+                var prim = new PrimAlgorithm();
+                prim.Threads(k);
+                int[,] graph;
+                graph = prim.RandomGraph(n);
 
-        Stopwatch seqtime = new Stopwatch();
-        seqtime.Start();
-        prim.Prim(graph, startVertex);
-        seqtime.Stop();
+                Stopwatch seqtime = new Stopwatch();
+                seqtime.Start();
+                prim.Prim(graph, startVertex);
+                seqtime.Stop();
 
-        Console.WriteLine($"prim seq run time: {seqtime.ElapsedMilliseconds} ms");
+                
+                Stopwatch paraltime = new Stopwatch();
+                paraltime.Start();
+                prim.PrimParallel(graph, startVertex);
+                paraltime.Stop();
 
-        Stopwatch paraltime = new Stopwatch();
-        paraltime.Start();
-        prim.PrimParallel(graph, startVertex);
-        paraltime.Stop();
+                
+                double speedup = (double)seqtime.ElapsedMilliseconds / paraltime.ElapsedMilliseconds;
+                double efficiency = (speedup / k) * 100;
 
-        Console.WriteLine($"prim paral run time with {k} threads: {paraltime.ElapsedMilliseconds} ms");
-
-        double acceleration = prim.Acceleration(seqtime, paraltime);
-        Console.WriteLine($"speedup: {acceleration.ToString("f2")}");
-        double prim_efficiency = prim.Efficiency(acceleration, k);
-        Console.WriteLine($"efficiency: {prim_efficiency.ToString("f2")}%");
+                Console.WriteLine($"k: {k} || n: {n} || seq time: {seqtime.ElapsedMilliseconds} ms || paral time: {paraltime.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}%");
+            }
+            Console.WriteLine('\t');
+        }
         Console.ReadLine();
     }
 }
