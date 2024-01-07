@@ -6,44 +6,47 @@ class Program
 {
     static void Main()
     {
-        int n = 512;
-        int m = 512;
-        int k = 8;
+        for (int k = 8; k >= 2; k = k - 2)
+        {
+            for (int n = 1024; n <= 8192; n = n * 2)
+            {
+                int m = n;
 
-        int[,] A = new int[n, m];
-        int[,] B = new int[m, n];
-        InitializeMatrix(A, n, m);
-        InitializeMatrix(B, n, m);
+                int[,] A = new int[n, m];
+                int[,] B = new int[m, n];
+                InitializeMatrix(A, n, m);
+                InitializeMatrix(B, n, m);
 
-        Stopwatch sequentialStopwatch = new Stopwatch();
-        sequentialStopwatch.Start();
-        int[,] resultSequential = SumMatricesSequential(A, B, n, m);
-        sequentialStopwatch.Stop();
-        Console.WriteLine($"+ seq run time = {sequentialStopwatch.ElapsedMilliseconds} ms");
+                Stopwatch sequentialStopwatch = new Stopwatch();
+                sequentialStopwatch.Start();
+                SumMatricesSequential(A, B, n, m);
+                sequentialStopwatch.Stop();
+                
+                Stopwatch parallelStopwatch = new Stopwatch();
+                parallelStopwatch.Start();
+                SumMatricesParallel(A, B, k, n, m);
+                parallelStopwatch.Stop();
+                
+                Stopwatch subseq = new Stopwatch();
+                subseq.Start();
+                SubtractMatricesSequential(A, B, n, m);
+                subseq.Stop();
+                
+                Stopwatch subparal = new Stopwatch();
+                subparal.Start();
+                SubtractMatricesParallel(A, B, k, n, m);
+                subparal.Stop();
+                
+                double speedup = (double)sequentialStopwatch.ElapsedMilliseconds / parallelStopwatch.ElapsedMilliseconds;
+                double efficiency = (speedup / k) * 100;
+                double mspeedup = (double)subseq.ElapsedMilliseconds / subparal.ElapsedMilliseconds;
+                double mefficiency = (mspeedup / k) * 100;
 
-        Stopwatch parallelStopwatch = new Stopwatch();
-        parallelStopwatch.Start();
-        int[,] resultParallel = SumMatricesParallel(A, B, k, n, m);
-        parallelStopwatch.Stop();
-        Console.WriteLine($"+ paral run time with {k} threads: {parallelStopwatch.ElapsedMilliseconds} ms");
-
-        Stopwatch subseq = new Stopwatch();
-        subseq.Start();
-        int[,] ressubseq = SubtractMatricesSequential(A, B, n, m);
-        subseq.Stop();
-        Console.WriteLine($"- seq run time: {subseq.ElapsedMilliseconds} ms");
-
-        Stopwatch subparal = new Stopwatch();
-        subparal.Start();
-        int[,] ressubparal = SubtractMatricesParallel(A, B, k, n, m);
-        subparal.Stop();
-        Console.WriteLine($"- paral run time with {k} threads: {subparal.ElapsedMilliseconds} ms");
-
-        double speedup = (double)sequentialStopwatch.ElapsedMilliseconds / parallelStopwatch.ElapsedMilliseconds;
-        double efficiency = speedup / k;
-
-        Console.WriteLine($"speedup = {speedup:F2}");
-        Console.WriteLine($"efficiency = {efficiency:F2}");
+                Console.WriteLine($"+ || k: {k} || n: {n} || seq time: {sequentialStopwatch.ElapsedMilliseconds} ms || paral time: {parallelStopwatch.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}%");
+                Console.WriteLine($"- || k: {k} || n: {n} || seq time: {subseq.ElapsedMilliseconds} ms || paral time: {subparal.ElapsedMilliseconds} ms || S: {mspeedup} || E: {mefficiency}%");
+            }
+            Console.WriteLine('\t');
+        }
         Console.ReadLine();
     }
 
@@ -131,18 +134,6 @@ class Program
         });
 
         return result;
-    }
-    public double Efficiency(double acceleration, int threads)
-    {
-        double efficiency = acceleration / threads * 100;
-        return efficiency;
-    }
-    public double Acceleration(Stopwatch stopwatch1, Stopwatch stopwatch2)
-    {
-        double time1 = (double)stopwatch1.ElapsedMilliseconds;
-        double time2 = (double)stopwatch2.ElapsedMilliseconds;
-        double boost = time1 / time2;
-        return boost;
     }
 
 

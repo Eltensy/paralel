@@ -6,31 +6,33 @@ class Program
 {
     static void Main()
     {
-        int n = 1000;
-        int k = 8;
+        for (int k = 8; k >= 2; k = k - 2)
+        {
+            for (int n = 32; n <= 1024; n = n * 2)
+            {
 
-        double[,] A = new double[n, n];
-        double[] b = new double[n];
-        InitializeSystem(A, b);
+                double[,] A = new double[n, n];
+                double[] b = new double[n];
+                InitializeSystem(A, b);
 
-        Stopwatch sequentialSolverStopwatch = new Stopwatch();
-        sequentialSolverStopwatch.Start();
-        double[] resultSequential = SolveLinearSystemSequential(A, b);
-        sequentialSolverStopwatch.Stop();
-        Console.WriteLine($"seq run time: {sequentialSolverStopwatch.ElapsedMilliseconds} ms");
+                Stopwatch sequentialSolverStopwatch = new Stopwatch();
+                sequentialSolverStopwatch.Start();
+                SolveLinearSystemSequential(A, b);
+                sequentialSolverStopwatch.Stop();
 
-        // Solve linear system (parallel algorithm)
-        Stopwatch parallelSolverStopwatch = new Stopwatch();
-        parallelSolverStopwatch.Start();
-        double[] resultParallel = SolveLinearSystemParallel(A, b, k);
-        parallelSolverStopwatch.Stop();
-        Console.WriteLine($"paral run time with {k} threads: {parallelSolverStopwatch.ElapsedMilliseconds} ms");
+                Stopwatch parallelSolverStopwatch = new Stopwatch();
+                parallelSolverStopwatch.Start();
+                SolveLinearSystemParallel(A, b, k);
+                parallelSolverStopwatch.Stop();
+                
 
-        double speedup = (double)sequentialSolverStopwatch.ElapsedMilliseconds / parallelSolverStopwatch.ElapsedMilliseconds;
-        double efficiency = speedup / k;
+                double speedup = (double)sequentialSolverStopwatch.ElapsedMilliseconds / parallelSolverStopwatch.ElapsedMilliseconds;
+                double efficiency = speedup / k;
 
-        Console.WriteLine($"speedup: {speedup:F2}");
-        Console.WriteLine($"efficiency: {efficiency:F2}");
+                Console.WriteLine($"k: {k} || n: {n} || seq time: {sequentialSolverStopwatch.ElapsedMilliseconds} ms || paral time: {parallelSolverStopwatch.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}");
+            }
+            Console.WriteLine('\t');
+        }
         Console.ReadLine();
     }
 

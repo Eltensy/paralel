@@ -28,10 +28,11 @@ class Program
                 parallelStopwatch.Stop();
 
                 double speedup = (double)sequentialStopwatch.ElapsedMilliseconds / parallelStopwatch.ElapsedMilliseconds;
-                double efficiency = speedup / k;
+                double efficiency = (speedup / k)*100;
 
-                Console.WriteLine($"k: {k} || n: {n} || seq time: {sequentialStopwatch.ElapsedMilliseconds} ms || paral time: {parallelStopwatch.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}");
+                Console.WriteLine($"k: {k} || n: {n} || seq time: {sequentialStopwatch.ElapsedMilliseconds} ms || paral time: {parallelStopwatch.ElapsedMilliseconds} ms || S: {speedup} || E: {efficiency}%");
             }
+            Console.WriteLine('\t');
         }
         Console.ReadLine();
     }
